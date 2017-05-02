@@ -1,0 +1,40 @@
+TARGET = "NCS.exe"
+
+CC = cl
+LD = link
+RC = rc
+
+CFLAGS  = /nologo /DWIN32 /D_WIN32
+LDFLAGS = /nologo /fixed /incremental:no
+RCFLAGS = /nologo
+
+!IF "$(CFG)" == "Debug"
+CFLAGS  = $(CFLAGS) /DDEBUG /D_DEBUG /Od /MDd /Zi
+LDFLAGS = $(LDFLAGS) /debug
+!ELSE
+CFLAGS  = $(CFLAGS) /O2
+!ENDIF
+
+OBJS = NCS.obj
+LIBS = Gdi32.lib Shell32.lib User32.lib
+RES  = resource.res
+
+All: $(TARGET)
+
+$(TARGET): $(RES) $(OBJS)
+	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) $(RES)
+
+Clean:
+	del *.obj
+	del *.pdb
+	del *.res
+
+.c.obj:
+	$(CC) $(CFLAGS) /c $<
+
+.rc.res:
+	$(RC) $(RCFLAGS) $<
+
+NCS.obj: NCS.c
+resource.res: resource.rc
+
